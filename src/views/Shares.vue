@@ -2,19 +2,14 @@
     <div class="container">
          <table>
             <tr>
-                <th>Company</th>
-                <th>Contact</th>
-                <th>Country</th>
+                <th>Purchase History</th>
+                <th>Shares</th>
+                <th>Price</th>
             </tr>
             <tr>
-                <td>Alfreds Futterkiste</td>
-                <td>Maria Anders</td>
-                <td>Germany</td>
-            </tr>
-            <tr>
-                <td>Centro comercial Moctezuma</td>
-                <td>Francisco Chang</td>
-                <td>Mexico</td>
+                <td>Title</td>
+                <td>2</td>
+                <td>$25.6</td>
             </tr>
         </table> 
     </div>
