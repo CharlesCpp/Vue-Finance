@@ -32,10 +32,10 @@ export default {
   setup() {
     const loading = ref(false)
     const email = ref("")
-
-    if (supabase.auth.user()) {
+    
+    if (supabase.auth.user() && router.currentRoute.value.path === '/login') {
       alert('You are already logged in!')
-      router.push('/')
+      router.push('/profile')
     }
 
     const handleLogin = async () => {
