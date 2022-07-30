@@ -24,7 +24,7 @@ if (supabase.auth.user() != null) {
         <RouterLink to="/">
         <button v-if="router.currentRoute.value.path == '/profile'" class="ms-auto button"> Home </button>
         </RouterLink>
-        <button v-if="user" class="ms-auto button"> Shares </button>
+        <button v-if="user" class="ms-auto button"> Purchase </button>
       </div>
   </div>
   <RouterView />
