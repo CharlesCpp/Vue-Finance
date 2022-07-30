@@ -24,6 +24,7 @@
 </template>
 
 <script lang="ts">
+import router from "@/router"
 import { ref } from "vue"
 import { supabase } from "../supabase"
 
@@ -31,6 +32,11 @@ export default {
   setup() {
     const loading = ref(false)
     const email = ref("")
+
+    if (supabase.auth.user()) {
+      alert('You are already logged in!')
+      router.push('/')
+    }
 
     const handleLogin = async () => {
       try {

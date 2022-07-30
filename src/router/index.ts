@@ -23,7 +23,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (!supabase.auth.user() != null && to.name !== 'Login') {
+  if (!supabase.auth.user() && to.name !== 'Login') {
     next('/login')
   } else {
     next()
