@@ -22,9 +22,11 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  if(supabase.auth.user()) {
-    next('/login');
+router.beforeEach(async (to, from, next) => {
+  if (!supabase.auth.user() != null && to.name !== 'Login') {
+    next('/login')
+  } else {
+    next()
   }
 })
 export default router
