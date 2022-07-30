@@ -1,3 +1,4 @@
+import { supabase } from './../supabase';
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -5,18 +6,25 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('../views/Auth.vue'!)
+      name: 'Shares',
+      component: () => import('../views/Shares.vue'!)
     },
     {
       path: '/profile',
       name: 'Profile',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/Profile.vue'!)
-    }
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/Auth.vue'!)
+    },
   ]
 })
 
+router.beforeEach((to, from, next) => {
+  if(supabase.auth.user()) {
+    next('/login');
+  }
+})
 export default router
