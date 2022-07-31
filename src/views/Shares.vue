@@ -1,16 +1,20 @@
 <template>
     <div class="container">
-        <h3 v-if="loading"> Loading... </h3>
          <table>
             <tr>
-                <th>Title</th>
+                <th v-if="loading"> Loading... </th>
+                <th v-else> Title </th>
+                <th>Symbol</th>
                 <th>Shares</th>
                 <th>Price</th>
+                <th>Time</th>
             </tr>
-            <tr v-for="row in history" :key="row.user_id">
-                <td>{{ hist.title }}</td>
-                <td>{{ hist.shares }}</td>
-                <td>{{ hist.price }}</td>
+            <tr v-for="row in history" :key="row.id" >
+                <td>{{ row.title }}</td>
+                <td>{{ row.symbol }}</td>
+                <td>{{ row.shares }}</td>
+                <td>{{ row.price }}</td>
+                <td>{{ moment(String(row.time)).format('MM/DD/YYYY@hh:mm') }}</td>
             </tr>
         </table> 
     </div>
@@ -18,27 +22,30 @@
 
 <script>
 import { store } from "../store"
-import { onMounted, ref } from "vue"
+import { onMounted, ref, reactive } from "vue"
 import { supabase } from "@/supabase"
+import moment from 'moment'
 
 export default {
     setup () {
         const loading = ref(true);
         const user = supabase.auth.user();
+        const history = ref([])
+
 
         async function getHistory() {
             try {
                 loading.value = true;
                     let { data, error, status } = await supabase
                     .from("history")
-                    .select(`user_id, title`)
+                    .select(`id, user_id, title, shares, price, time, symbol`)
                     .eq("user_id", user.id)
-                    .single()
+
 
                     if (error && status !== 406) throw error
 
                     if (data) {
-                    this.history = data
+                    history.value = data
                     }
                 } catch (error) {
                     alert(error.message)
@@ -53,13 +60,14 @@ export default {
          
         return {
             loading,
-            user,
+            history,
+            moment
         }
     },
 
-    data() {
-        return {
-            history: []
+    computed: {
+        logHistory() {
+            console.log(this.hist)
         }
     }
 }

@@ -12,6 +12,10 @@
       <label for="website">Last name</label>
       <input id="website" type="website" v-model="website" />
     </div>
+    <div>
+      <label for="money">Money</label>
+      <input id="money" type="money" v-model="money" disabled/>
+    </div>
 
     <div class="flex-end">
       <input
@@ -41,6 +45,7 @@ export default {
     const username = ref("")
     const website = ref("")
     const avatar_url = ref("")
+    const money = ref("")
 
     async function getProfile() {
       try {
@@ -49,7 +54,7 @@ export default {
 
         let { data, error, status } = await supabase
           .from("profiles")
-          .select(`id, first_name, last_name`)
+          .select(`id, first_name, last_name, money`)
           .eq("id", store.user.id)
           .single()
 
@@ -58,6 +63,8 @@ export default {
         if (data) {
           username.value = data.first_name
           website.value = data.last_name
+          money.value = "$" + data.money
+
         }
       } catch (error) {
         alert(error.message)
@@ -112,6 +119,7 @@ export default {
       username,
       website,
       avatar_url,
+      money,
 
       updateProfile,
       signOut,
