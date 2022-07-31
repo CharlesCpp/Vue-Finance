@@ -40,6 +40,7 @@ export default {
                     .from("history")
                     .select(`id, user_id, title, shares, price, time, symbol`)
                     .eq("user_id", user.id)
+                    .order('time')
 
 
                     if (error && status !== 406) throw error

@@ -18,13 +18,19 @@ if (supabase.auth.user() != null) {
       <img src="./assets/vite.svg" class="logo" alt="Vite logo" />
     </a>
       <div class="row flex flex-center">
-        <RouterLink to="/profile">
-        <button v-if="router.currentRoute.value.path == '/' && user" class="ms-auto button"> Profile </button>
-        </RouterLink>
+
         <RouterLink to="/">
-        <button v-if="router.currentRoute.value.path == '/profile'" class="ms-auto button"> Home </button>
+        <button v-if="router.currentRoute.value.path !== '/'" class="ms-auto button"> Home </button>
         </RouterLink>
+
+        <RouterLink to="/profile">
+        <button v-if="router.currentRoute.value.path !== '/profile' && user" class="ms-auto button"> Profile </button>
+        </RouterLink>
+
+        <RouterLink to="/buy">
         <button v-if="user" class="ms-auto button"> Purchase </button>
+        </RouterLink>
+        
       </div>
   </div>
   <RouterView />
