@@ -40,7 +40,7 @@
                 <td>${{ api.latestPrice }}</td>
                 <td>{{ api.closeSource }}</td>
                 <td>{{ api.symbol }}</td>
-                <button @submit.prevent="buyShares" class="row-button block">Buy</button>
+                <button @click="buyShares" class="row-button block">Buy</button>
             </tr>
         </table> 
     </div>
@@ -81,8 +81,19 @@
                 }
             }
 
-            const buyShares = () => {
-                alert("You bought this share")
+            async function buyShares() {
+                let input;
+                let i;
+                while (true) {
+                    input = window.prompt("How many shares you would like to buy ?")
+                    i = Number(input)
+                    if (isNaN(i)) {
+                        alert("Wrong input: (Must be a valid number)")
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
             }
 
             return {
