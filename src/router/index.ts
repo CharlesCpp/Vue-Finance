@@ -7,12 +7,18 @@ const router = createRouter({
     {
       path: '/',
       name: 'Shares',
-      component: () => import('../views/Shares.vue'!)
+      component: () => import('../views/Shares.vue'!),
+      meta: {
+        requireAuth: true,
+      }
     },
     {
       path: '/profile',
       name: 'Profile',
-      component: () => import('../views/Profile.vue'!)
+      component: () => import('../views/Profile.vue'!),
+      meta: {
+        requireAuth: true,
+      }
     },
     {
       path: '/login',
@@ -22,16 +28,25 @@ const router = createRouter({
     {
       path: '/buy',
       name: 'Buy Shares',
-      component: () => import('../views/BuyShares.vue'!)
+      component: () => import('../views/BuyShares.vue'!),
+      meta: {
+        requireAuth: true,
+      }
     },
   ]
 })
 
-router.beforeEach(async (to, from, next) => {
-  if (!supabase.auth.user() && to.name !== 'Login') {
-    next('/login')
+function delay() {
+  return new Promise(resolve => setTimeout(resolve, 500));
+}
+
+router.beforeEach( (to, from, next) => {
+  const requireAuth = to.matched.some(record => record.meta.requireAuth);
+  const isAuth = supabase.auth.user();
+  if (requireAuth && !isAuth) {
+    delay().then(() => next('/login'));
   } else {
-    next()
+    next();
   }
 })
 

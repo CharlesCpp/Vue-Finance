@@ -34,7 +34,6 @@ export default {
     const email = ref("")
     
     if (supabase.auth.user() && router.currentRoute.value.path === '/login') {
-      alert('You are already logged in!')
       router.push('/profile')
     }
 

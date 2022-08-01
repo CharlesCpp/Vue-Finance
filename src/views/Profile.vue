@@ -38,6 +38,7 @@
 import { supabase } from "../supabase"
 import { store } from "../store"
 import { onMounted, ref } from "vue"
+import router from "@/router"
 
 export default {
   setup() {
@@ -101,11 +102,13 @@ export default {
       try {
         loading.value = true
         let { error } = await supabase.auth.signOut()
+
         if (error) throw error
       } catch (error) {
         alert(error.message)
       } finally {
         loading.value = false
+        router.push('/login')
       }
     }
 

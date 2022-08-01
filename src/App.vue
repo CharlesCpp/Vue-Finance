@@ -4,12 +4,6 @@ import { ref } from 'vue';
 import { supabase } from './supabase';
 import router from './router';
 
-const user = ref(false)
-
-if (supabase.auth.user() != null) {
-  user.value = true;
-}
-
 </script>
 
 <template>
@@ -24,11 +18,11 @@ if (supabase.auth.user() != null) {
         </RouterLink>
 
         <RouterLink to="/profile">
-        <button v-if="router.currentRoute.value.path !== '/profile' && user" class="ms-auto button"> Profile </button>
+        <button v-if="router.currentRoute.value.path !== '/profile'" class="ms-auto button"> Profile </button>
         </RouterLink>
 
         <RouterLink to="/buy">
-        <button v-if="user" class="ms-auto button"> Purchase </button>
+        <button class="ms-auto button"> Purchase </button>
         </RouterLink>
         
       </div>
