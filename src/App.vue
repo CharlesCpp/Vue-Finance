@@ -47,4 +47,7 @@ import router from './router';
 .button {
   margin: 10px;
 }
+button:hover {
+  filter: drop-shadow(0 0 0.5em #646cffaa);
+}
 </style>

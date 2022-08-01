@@ -9,7 +9,7 @@
       <input id="username" type="text" v-model="username" />
     </div>
     <div>
-      <label for="website">Last name</label>
+      <label for="website" >Last name</label>
       <input id="website" type="website" v-model="website" />
     </div>
     <div>
@@ -43,10 +43,10 @@ import router from "@/router"
 export default {
   setup() {
     const loading = ref(true)
-    const username = ref("")
-    const website = ref("")
+    const username = ref("Loading...")
+    const website = ref("Loading...")
     const avatar_url = ref("")
-    const money = ref("")
+    const money = ref("Loading...")
 
     async function getProfile() {
       try {
@@ -138,5 +138,9 @@ export default {
 
 .flex-end {
   margin-top: 24px;
+}
+
+button:hover {
+  filter: drop-shadow(0 0 0.5em #646cffaa);
 }
 </style>
