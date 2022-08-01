@@ -16,6 +16,7 @@ coverage
 *.zip
 .env
 supabase.js
+token.ts
 
 /cypress/videos/
 /cypress/screenshots/
