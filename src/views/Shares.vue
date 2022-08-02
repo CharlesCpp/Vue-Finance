@@ -13,7 +13,7 @@
                 <td>{{ row.title }}</td>
                 <td>{{ row.symbol }}</td>
                 <td>{{ row.shares }}</td>
-                <td>{{ row.price }}</td>
+                <td>${{ row.price }}</td>
                 <td>{{ moment(String(row.time)).format('MM/DD/YYYY@hh:mm') }}</td>
             </tr>
         </table> 

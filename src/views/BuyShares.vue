@@ -2,7 +2,7 @@
     <div class="container">
         <form class="form-widget row flex flex-center" @submit.prevent="getShares">
             <div>
-                <label>Symbol</label>
+                <label>Available money = ${{ money }}</label>
                 <input id="symbol" type="text" placeholder="Symbol (ex: USD)" v-model="symbol"/>
             </div>
 
@@ -50,8 +50,10 @@
 </template>
 
 <script lang="ts">
+    import router from '@/router'
+import { supabase } from '@/supabase'
     import axios from 'axios'
-    import { ref } from 'vue'
+    import { onMounted, ref } from 'vue'
     import { token } from '../stores/token'
     export default {
         setup() {
@@ -60,6 +62,8 @@
             const loading = ref(false)
             const querry = ref(false)
             const err = ref()
+            const money = ref()
+            const price = ref()
 
             async function getShares() {
                 err.value = false;
@@ -82,19 +86,77 @@
             }
 
             async function buyShares() {
-                let input;
-                let i;
-                while (true) {
-                    input = window.prompt("How many shares you would like to buy ?")
-                    i = Number(input)
-                    if (isNaN(i)) {
-                        alert("Wrong input: (Must be a valid number)")
-                        continue;
-                    } else {
-                        break;
+                let input = window.prompt("How many shares you would like to buy ?");
+                let i = Number(input);
+                if (isNaN(i) || i < 1) {
+                        alert("Wrong input: (Must be a valid number) or higher than 0")
+                        return;
+                }
+
+                try {
+                    const response = await axios.get('https://cloud.iexapis.com/stable/stock/' + symbol.value + '/quote?token=' + token.token)
+                    price.value = response.data.latestPrice * i;
+                    const update = {
+                        user_id: supabase.auth.user()?.id,
+                        title: response.data.companyName,
+                        symbol: symbol.value,
+                        shares: i,
+                        price: response.data.latestPrice * i,
+                        time: new Date(),
                     }
+
+                    let { error } = await supabase.from('history').insert(update, {
+                        returning: "minimal",
+                    })
+                    if(error) throw error;
+                } catch (error:any) {
+                    alert(error.message);                    
+                } finally {
+                    alert("Success");
+                }
+
+                try {
+                    loading.value = true
+
+                    const updates = {
+                    id: supabase.auth.user()?.id,
+                    money: money.value - price.value,
+                    }
+
+                    let { error } = await supabase.from("profiles").upsert(updates, {
+                    returning: "minimal", // Don't return the value after inserting
+                    })
+
+                    if (error) throw error
+                } catch (error: any) {
+                    alert(error.message)
+                } finally {
+                    loading.value = false
+                    router.push('/');
                 }
             }
+
+            async function getMoney() {
+                try {
+                    let { data, error, status } = await supabase
+                    .from('profiles')
+                    .select(`money`)
+                    .eq("id", supabase.auth.user()?.id)
+                    .single()
+                
+                    if (error && status !== 406) throw error
+
+                    if (data) {
+                    money.value = data.money
+                    }
+                } catch (error:any) {
+                    alert(error.message)
+                }
+            }
+            
+            onMounted(() => {
+                getMoney()
+            })
 
             return {
                 api,
@@ -104,6 +166,7 @@
                 symbol,
                 err,
                 buyShares,
+                money,
             }
         }
     }
