@@ -25,6 +25,9 @@ import router from './router';
         <button class="ms-auto button"> Purchase </button>
         </RouterLink>
         
+        <RouterLink to="/sell">
+        <button class="ms-auto button"> Sell </button>
+        </RouterLink>
       </div>
   </div>
   <RouterView />

@@ -33,6 +33,14 @@ const router = createRouter({
         requireAuth: true,
       }
     },
+    {
+      path: '/sell',
+      name: 'Sell Shares',
+      component: () => import('../views/SellShares.vue'!),
+      meta: {
+        requireAuth: true,
+      }
+    },
   ]
 })
 
