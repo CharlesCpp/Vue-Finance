@@ -11,7 +11,7 @@
             <span class="focus"></span>
             </div>
             <div v-if="selectValue" class="Btn-Confirm form-widget  flex-center">
-                <p>How many shares you want to sell ? </p><input placeholder="Min: 1" @keypress="onlyNumber"/>
+                <p>How many shares you want to sell ? </p><input placeholder="Min: 1" v-model="sharesNumber" @keypress="onlyNumber" min="1"/>
                 <button class="Btn-Confirm" @click.prevent="sellShares"> Sell</button>
             </div>
         </div>
@@ -47,12 +47,31 @@ export default {
 
         function onlyNumber ($event:any) {
             let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
-            if ((keyCode <= 48 || keyCode > 57)) { // 46 is dot
+            if ((keyCode < 48 || keyCode > 57)) { // 46 is dot
                 $event.preventDefault();
             }
         }
 
         async function sellShares() {
+            let number;
+            try {
+                let { data, error, status } = await supabase
+                .from('history')
+                .select('shares')
+                .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
+
+                if (error && status != 406) throw error;
+                if (data) {
+                    if (sharesNumber.value > data[0].shares) {
+                        alert("You don't that much shares on " + selectValue.value)
+                    } else {
+                        number = data[0].shares
+                    }
+                }
+            } catch (error:any) {
+                alert(error.message);
+            }
+
             
         }
 
