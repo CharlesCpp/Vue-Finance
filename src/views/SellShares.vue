@@ -19,6 +19,7 @@
 </template>
 
 <script lang="ts">
+import router from "@/router";
 import { supabase } from "@/supabase";
 import { onMounted, ref } from "vue"
 
@@ -83,6 +84,7 @@ export default {
                 if (data) {
                     if (sharesNumber.value > data[0].shares) {
                         alert("You don't have that much shares on " + selectValue.value)
+                        return;
                     } else {
                         requestValue = data;
                         number = data[0].shares
@@ -92,8 +94,30 @@ export default {
                 alert(error.message);
             }
 
-            let {error} = await supabase.from('history').update({shares: requestValue[0].shares - sharesNumber.value, time: new Date()})
-            .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
+            if (sharesNumber.value < number) {
+                try {
+                    let {error} = await supabase.from('history').update({shares: requestValue[0].shares - sharesNumber.value, time: new Date()})
+                    .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
+                    
+                    if (error) throw (error)
+                } catch (error:any) {
+                    console.log(error.message);
+                } finally {
+                    router.push('/');
+                }
+            } else {
+                try {
+                    let {error} = await supabase.from('history').delete().eq('symbol', selectValue.value)
+                    alert("Sold " + sharesNumber.value + " of " + selectValue.value);
+                    
+                    if(error) throw(error)
+                } catch (error:any) {
+                    console.log(error.message);
+                } finally {
+                    router.push('/');
+                }
+
+            }
             
         }
 
