@@ -29,6 +29,7 @@ export default {
         const sharesNumber = ref();
         const selectedSymbol = ref();
         const remainingShares = ref();
+        let requestValue: any;
 
         async function getCurrentShares() {
             try {
@@ -67,6 +68,7 @@ export default {
 
         async function sellShares() {
             let number;
+
             if (sharesNumber.value <= 0) {
                 alert("You must but a number higher than 0")
                 return;
@@ -74,14 +76,15 @@ export default {
             try {
                 let { data, error, status } = await supabase
                 .from('history')
-                .select('shares')
+                .select('shares, title, symbol')
                 .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
 
                 if (error && status != 406) throw error;
                 if (data) {
                     if (sharesNumber.value > data[0].shares) {
-                        alert("You don't that much shares on " + selectValue.value)
+                        alert("You don't have that much shares on " + selectValue.value)
                     } else {
+                        requestValue = data;
                         number = data[0].shares
                     }
                 }
@@ -89,6 +92,8 @@ export default {
                 alert(error.message);
             }
 
+            let {error} = await supabase.from('history').update({shares: requestValue[0].shares - sharesNumber.value, time: new Date()})
+            .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
             
         }
 
