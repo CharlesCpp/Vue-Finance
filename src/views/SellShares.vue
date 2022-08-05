@@ -107,7 +107,7 @@ export default {
                 }
             } else {
                 try {
-                    let {error} = await supabase.from('history').delete().eq('symbol', selectValue.value)
+                    let {error} = await supabase.from('history').delete().match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
                     alert("Sold " + sharesNumber.value + " of " + selectValue.value);
                     
                     if(error) throw(error)
