@@ -30,9 +30,18 @@ export default {
         const sharesNumber = ref();
         const selectedSymbol = ref();
         const remainingShares = ref();
+        const currentMoney = ref();
         let requestValue: any;
 
         async function getCurrentShares() {
+            try {
+                let {error, data} = await supabase.from('profiles').select('money').eq('id', supabase.auth.user()?.id)
+
+                if (data) currentMoney.value = data[0].money;
+                if (error) throw error;
+            } catch (error:any) {
+                alert(error.message);
+            }
             try {
                 let { data, error,status } = await supabase
                 .from('history')
@@ -77,7 +86,7 @@ export default {
             try {
                 let { data, error, status } = await supabase
                 .from('history')
-                .select('shares, title, symbol')
+                .select('shares, title, symbol, price')
                 .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
 
                 if (error && status != 406) throw error;
@@ -99,17 +108,19 @@ export default {
                     let {error} = await supabase.from('history').update({shares: requestValue[0].shares - sharesNumber.value, time: new Date()})
                     .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
                     
+                    updateMoney();
                     if (error) throw (error)
                 } catch (error:any) {
                     console.log(error.message);
                 } finally {
                     router.push('/');
-                }
+                }   
             } else {
                 try {
                     let {error} = await supabase.from('history').delete().match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
                     alert("Sold " + sharesNumber.value + " of " + selectValue.value);
                     
+                    updateMoney();
                     if(error) throw(error)
                 } catch (error:any) {
                     console.log(error.message);
@@ -122,16 +133,28 @@ export default {
             
         }
 
+        async function updateMoney() {
+            try {
+                let {error} = await supabase.from('profiles').update({money: currentMoney.value + currentMoney.value}).eq("id", supabase.auth.user()?.id)
+
+                if (error) throw error
+            } catch (error:any) {
+                alert(error.message);
+            }
+        }
+
         onMounted(() => {
             getCurrentShares();
         })
         return {
+            currentMoney,
             remainingShares,
             selectedSymbol,
             historyData,
             selectValue,
             sharesNumber,
 
+            updateMoney,
             onChange,
             onlyNumber,
             sellShares,
