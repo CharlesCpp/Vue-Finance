@@ -107,12 +107,14 @@ export default {
                 try {
                     let {error} = await supabase.from('history').update({shares: requestValue[0].shares - sharesNumber.value, time: new Date()})
                     .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
+                    alert("Sold " + sharesNumber.value + " of " + selectValue.value);
                     
-                    updateMoney();
+                    await updateMoney();
                     if (error) throw (error)
                 } catch (error:any) {
                     console.log(error.message);
                 } finally {
+                    
                     router.push('/');
                 }   
             } else {
@@ -120,12 +122,13 @@ export default {
                     let {error} = await supabase.from('history').delete().match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
                     alert("Sold " + sharesNumber.value + " of " + selectValue.value);
                     
-                    updateMoney();
+                    await updateMoney();
                     if(error) throw(error)
                 } catch (error:any) {
                     console.log(error.message);
                 } finally {
                     // Send user to home page
+                    
                     router.push('/');
                 }
 
@@ -135,7 +138,7 @@ export default {
 
         async function updateMoney() {
             try {
-                let {error} = await supabase.from('profiles').update({money: currentMoney.value + currentMoney.value}).eq("id", supabase.auth.user()?.id)
+                let {error} = await supabase.from('profiles').update({money: currentMoney.value + (requestValue[0].price * sharesNumber.value)}).eq("id", supabase.auth.user()?.id)
 
                 if (error) throw error
             } catch (error:any) {

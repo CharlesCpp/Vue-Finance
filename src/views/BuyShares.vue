@@ -101,7 +101,7 @@ import { supabase } from '@/supabase'
                         title: response.data.companyName,
                         symbol: symbol.value,
                         shares: i,
-                        price: response.data.latestPrice * i,
+                        price: response.data.latestPrice,
                         time: new Date(),
                     }
 
