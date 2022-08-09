@@ -114,6 +114,7 @@ export default {
                 } catch (error:any) {
                     console.log(error.message);
                 } finally {
+                    // Send user to home page
                     router.push('/');
                 }
 
