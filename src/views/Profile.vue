@@ -13,7 +13,7 @@
       <input id="website" type="website" v-model="website" />
     </div>
     <div>
-      <label for="money">Money</label>
+      <label for="money">Available Money</label>
       <input id="money" type="money" v-model="money" disabled/>
     </div>
 
