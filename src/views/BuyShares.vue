@@ -93,9 +93,17 @@ import { supabase } from '@/supabase'
                         return;
                 }
 
+                
+
                 try {
                     const response = await axios.get('https://cloud.iexapis.com/stable/stock/' + symbol.value + '/quote?token=' + token.token)
                     price.value = response.data.latestPrice * i;
+
+                    if (money.value < price.value) {
+                        alert("You don't own that much money");
+                        return;
+                    }
+
                     const update = {
                         user_id: supabase.auth.user()?.id,
                         title: response.data.companyName,
@@ -111,12 +119,14 @@ import { supabase } from '@/supabase'
                     if(error) throw error;
                 } catch (error:any) {
                     alert(error.message);                    
-                } finally {
-                    alert("Success");
                 }
 
                 try {
                     loading.value = true
+
+                    if (money.value < price.value) {
+                        return;
+                    }
 
                     const updates = {
                     id: supabase.auth.user()?.id,

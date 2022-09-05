@@ -107,20 +107,19 @@ export default {
                 try {
                     let {error} = await supabase.from('history').update({shares: requestValue[0].shares - sharesNumber.value, time: new Date()})
                     .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
-                    alert("Sold " + sharesNumber.value + " of " + selectValue.value);
+                    alert("Sold " + sharesNumber.value + " of " + selectValue.value + ' for $' + Math.round(currentMoney.value + (requestValue[0].price * sharesNumber.value)));
                     
                     await updateMoney();
                     if (error) throw (error)
                 } catch (error:any) {
                     console.log(error.message);
                 } finally {
-                    
                     router.push('/');
                 }   
             } else {
                 try {
                     let {error} = await supabase.from('history').delete().match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
-                    alert("Sold " + sharesNumber.value + " of " + selectValue.value);
+                    alert("Sold " + sharesNumber.value + " of " + selectValue.value + ' for $' + Math.round(currentMoney.value + (requestValue[0].price * sharesNumber.value)));
                     
                     await updateMoney();
                     if(error) throw(error)
@@ -128,7 +127,6 @@ export default {
                     console.log(error.message);
                 } finally {
                     // Send user to home page
-                    
                     router.push('/');
                 }
 
