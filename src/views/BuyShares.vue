@@ -51,7 +51,7 @@
 
 <script lang="ts">
     import router from '@/router'
-import { supabase } from '@/supabase'
+    import { supabase } from '@/supabase'
     import axios from 'axios'
     import { onMounted, ref } from 'vue'
     import { token } from '../stores/token'
@@ -94,7 +94,7 @@ import { supabase } from '@/supabase'
                 }
 
                 
-
+                // Buying the symbol's shares and updating the database
                 try {
                     const response = await axios.get('https://cloud.iexapis.com/stable/stock/' + symbol.value + '/quote?token=' + token.token)
                     price.value = response.data.latestPrice * i;
@@ -103,24 +103,53 @@ import { supabase } from '@/supabase'
                         alert("You don't own that much money");
                         return;
                     }
+                    
+                    let { data } = await supabase
+                    .from('history')
+                    .select('symbol, shares')
+                    .match({user_id: supabase.auth.user()?.id, symbol: symbol.value})
+                    .single()
+                    
+                    // Checking if user already bought the same symbol's share before
+                    if(!data) {
 
-                    const update = {
-                        user_id: supabase.auth.user()?.id,
-                        title: response.data.companyName,
-                        symbol: symbol.value,
-                        shares: i,
-                        price: response.data.latestPrice,
-                        time: new Date(),
+                        const update = {
+                            user_id: supabase.auth.user()?.id,
+                            title: response.data.companyName,
+                            symbol: symbol.value,
+                            shares: i,
+                            price: response.data.latestPrice,
+                            time: new Date(),
+                        }
+
+                        let { error } = await supabase.from('history').insert(update, {
+                            returning: "minimal",
+                        })
+
+                        if(error) throw error;
+
+                    } else {
+
+                        const update = {
+                            shares: data.shares + i,
+                            time: new Date(),
+                        }
+
+                        let { error } = await supabase
+                        .from('history')
+                        .update(update, {
+                            returning: "minimal",
+                        })
+                        .match({user_id: supabase.auth.user()?.id, symbol: symbol.value})
+
+                        if (error) throw error
                     }
-
-                    let { error } = await supabase.from('history').insert(update, {
-                        returning: "minimal",
-                    })
-                    if(error) throw error;
+                    
                 } catch (error:any) {
                     alert(error.message);                    
                 }
-
+                
+                // Updating user's money
                 try {
                     loading.value = true
 
