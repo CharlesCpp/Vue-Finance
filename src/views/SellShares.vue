@@ -107,7 +107,7 @@ export default {
                 try {
                     let {error} = await supabase.from('history').update({shares: requestValue[0].shares - sharesNumber.value, time: new Date()})
                     .match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
-                    alert("Sold " + sharesNumber.value + " of " + selectValue.value + ' for $' + Math.round(currentMoney.value + (requestValue[0].price * sharesNumber.value)));
+                    alert("Sold " + sharesNumber.value + " of " + selectValue.value + ' for $' + Math.round(requestValue[0].price * sharesNumber.value));
                     
                     await updateMoney();
                     if (error) throw (error)
@@ -119,7 +119,7 @@ export default {
             } else {
                 try {
                     let {error} = await supabase.from('history').delete().match({user_id: supabase.auth.user()?.id, symbol: selectValue.value})
-                    alert("Sold " + sharesNumber.value + " of " + selectValue.value + ' for $' + Math.round(currentMoney.value + (requestValue[0].price * sharesNumber.value)));
+                    alert("Sold " + sharesNumber.value + " of " + selectValue.value + ' for $' + Math.round(requestValue[0].price * sharesNumber.value));
                     
                     await updateMoney();
                     if(error) throw(error)
